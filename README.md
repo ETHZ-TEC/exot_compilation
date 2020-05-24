@@ -27,6 +27,8 @@ sudo sh get-docker.sh
 sudo usermod -aG docker $USER
 ```
 
+In order to use docker as a non-root you must logout/login or restart.
+
 The following are the steps required on [Ubuntu](https://docs.docker.com/install/linux/docker-ce/ubuntu/):
 
 1. Remove old versions of Docker:
@@ -63,7 +65,7 @@ The following are the steps required on [Ubuntu](https://docs.docker.com/install
     sudo apt-get install docker-ce docker-ce-cli containerd.io
     ```
 
-4. [Post-installation step](https://docs.docker.com/install/linux/linux-postinstall/) → Add yourself to the *docker* group to use Docker as a non-root user:
+4. [Post-installation step](https://docs.docker.com/install/linux/linux-postinstall/) → Add yourself to the *docker* group to use Docker as a non-root user (restart or at least logout/login required):
 
     ```sh
     sudo usermod -aG docker $USER
@@ -105,9 +107,15 @@ After building the image using the *scripted* rule, a special script will be cre
 Assuming that the created script was called *dock*, one can, for example, build a CMake project by running on the host machine:
 
 ```sh
-dock cmake -DCMAKE_TOOLCHAIN_FILE=/tool/static/x86_64.cmake -DCMAKE_BUILD_TYPE=Debug -B build/linux-amd64 -H.
+dock cmake -DCMAKE_TOOLCHAIN_FILE=/tool/static/x86_64.cmake -DCMAKE_BUILD_TYPE=Debug -Bbuild/linux-amd64 -H.
 dock cmake --build build/linux-amd64 --target <target>
 ```
+
+The `-B` flag is used to specify the build folder output, while the `-H` flag specifies the source folder. Both specified directories are relative to the current folder.
+
+> *Caveat*: Make sure to __specify only relative paths when supplying the source and build folder flags__( `-H` and `-B`)! The Docker runtime mounts the current working directory in the container. Therefore, it does not have access to any directory that is a parent/sibling, and __cannot work with absolute paths__!
+
+> *Note*: Make sure that there are __no spaces when providing the flags__ for build output folder (*-B*) and source folder (*-H*). If spaces are present (e.g. *-B build/output* instead of *-Bbuild/output*) the results will not be as expected.
 
 To output the version info of the installed compilers and tools, run:
 

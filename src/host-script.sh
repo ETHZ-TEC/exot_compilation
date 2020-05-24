@@ -18,7 +18,7 @@ u:error() {
 }
 
 u:error_and_exit() {
-    error $@
+    u:error $@
     exit 1
 }
 

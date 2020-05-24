@@ -50,6 +50,11 @@ RUN apt-get install -q --no-install-recommends --yes \
     g++-$GCC_VER-arm-linux-gnueabi                   \
     g++-$GCC_VER-arm-linux-gnueabihf
 
+# install the GNU debugger
+RUN apt-get install -q --no-install-recommends --yes \
+    gdb                                              \
+    gdb-multiarch
+
 # install build tools
 RUN apt-get install -q --no-install-recommends --yes \
     ninja-build                                      \
